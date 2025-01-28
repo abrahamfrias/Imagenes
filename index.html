@@ -3,108 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar a Telegram con API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        input, textarea, button {
-            display: block;
-            margin: 10px 0;
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <title>Enviar Imagen a Telegram</title>
 </head>
 <body>
-    <h1>Enviar mensajes y archivos a Telegram</h1>
-
-    <!-- Formulario para enviar texto -->
-    <textarea id="message" rows="4" placeholder="Escribe tu mensaje aquí..."></textarea>
-    <button onclick="sendMessage()">Enviar mensaje</button>
-
-    <!-- Formulario para enviar archivos -->
-    <input type="file" id="fileInput">
-    <button onclick="sendFile()">Enviar archivo</button>
+    <h1>Enviar Imagen a Telegram</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" id="file-input" accept="image/*">
+        <button type="submit">Enviar Imagen</button>
+    </form>
 
     <script>
-        // Token y chat ID proporcionados
-        const token = "7942913397:AAH7v5CiM27nKvV7IsK3T3TRnE-LJm5doQ0";
-        const chatId = "1617751854";
+        document.getElementById('upload-form').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Función para enviar un mensaje de texto
-        function sendMessage() {
-            const message = document.getElementById("message").value.trim();
-            if (!message) {
-                alert("Escribe un mensaje antes de enviarlo.");
-                return;
-            }
-            const url = https://api.telegram.org/bot${token}/sendMessage;
+            var fileInput = document.getElementById('file-input');
+            var file = fileInput.files[0];
 
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.ok) {
-                    alert("Mensaje enviado correctamente.");
-                } else {
-                    alert("Error al enviar el mensaje.");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("No se pudo conectar con Telegram.");
-            });
-        }
-
-        // Función para enviar un archivo
-        function sendFile() {
-            const fileInput = document.getElementById("fileInput");
-            const file = fileInput.files[0];
             if (!file) {
-                alert("Selecciona un archivo antes de enviarlo.");
+                alert("Por favor, selecciona una imagen.");
                 return;
             }
 
-            const url = https://api.telegram.org/bot${token}/sendDocument;
-            const formData = new FormData();
-            formData.append("chat_id", chatId);
-            formData.append("document", file);
+            var formData = new FormData();
+            formData.append("chat_id", "1617751854");  // Reemplaza con tu chat_id
+            formData.append("photo", file);  // Agrega el archivo como 'photo'
 
-            fetch(url, {
+            fetch("https://api.telegram.org/bot7942913397:AAH7v5CiM27nKvV7IsK3T3TRnE-LJm5doQ0/sendPhoto", {
                 method: "POST",
                 body: formData
             })
             .then(response => response.json())
             .then(data => {
                 if (data.ok) {
-                    alert("Archivo enviado correctamente.");
+                    alert("¡Imagen enviada exitosamente!");
                 } else {
-                    alert("Error al enviar el archivo.");
+                    alert("Hubo un error al enviar la imagen.");
                 }
             })
             .catch(error => {
-                console.error("Error:", error);
-                alert("No se pudo conectar con Telegram.");
+                alert("Error de red: " + error);
             });
-        }
+        });
     </script>
 </body>
 </html>
